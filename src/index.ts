@@ -1,11 +1,62 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import ip from 'ip';
 import Singleton from './singleton';
 import ProductFactory from './factory';
 import { ConcreteComponent, ConcreteDecoratorA } from './decorator';
+import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware';
+import cors from 'cors';
 
 const app = express();
 const PORT = 44377;
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+const whiteList = [
+    'http://localhost:3000',
+    'midominio.com.gt'
+]
+
+const corsOPtions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        if (whiteList.includes(origin || '') || !origin) {
+            callback(null, true);
+        } else {
+           callback(new Error('ACCESO DENEGADO! Origen no autorizado.')) 
+        }
+    }
+}
+
+app.use(cors(corsOPtions));
+
+app.post('/data-urlencoded', (req: Request, res: Response) => {
+    res.json({
+        message: "Datos Recibidos",
+        data: req.body
+    })
+});
+
+app.post('/data-json', (req: Request, res: Response) => {
+    res.json({
+        message: "Datos recibidos",
+        data: req.body
+    })
+})
+
+app.get('/api/data', (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (Math.random() > 0.5) {
+            throw new Error('Error al obtener los datos');
+        }
+        
+        res.json({
+            data: 'Aqui estan tus datos'
+        });
+    } catch (error) {
+        next(error);
+    }
+})
+app.use(errorHandlerMiddleware);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hola!');
