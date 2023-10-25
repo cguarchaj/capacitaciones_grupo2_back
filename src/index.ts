@@ -6,6 +6,7 @@ import { ConcreteComponent, ConcreteDecoratorA } from './decorator';
 import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware';
 import cors from 'cors';
 import Estudiantes from '../src/routes/estudiante.routes';
+import { LogErrors, errorHandler, boomHandler } from './middlewares/error.handler';
 
 const app = express();
 const PORT = 44377;
@@ -30,6 +31,9 @@ const corsOPtions = {
 
 app.use(cors(corsOPtions));
 app.use('/api/v1/estudiantes', Estudiantes);
+app.use(LogErrors);
+app.use(errorHandler);
+app.use(boomHandler);
 
 app.post('/data-urlencoded', (req: Request, res: Response) => {
     res.json({
