@@ -7,6 +7,7 @@ import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware';
 import cors from 'cors';
 import Estudiantes from '../src/routes/estudiante.routes';
 import { LogErrors, errorHandler, boomHandler } from './middlewares/error.handler';
+import routerApi from './routes';
 
 const app = express();
 const PORT = 44377;
@@ -31,6 +32,8 @@ const corsOPtions = {
 
 app.use(cors(corsOPtions));
 app.use('/api/v1/estudiantes', Estudiantes);
+routerApi(app);
+
 app.use(LogErrors);
 app.use(errorHandler);
 app.use(boomHandler);

@@ -16,9 +16,9 @@ export const login = async (username: string, password: string, res: Response) =
             })
         }
 
-        const result = await connection.execute('SELECT 1 FROM DUAL');
+        const result = await connection.execute('SELECT * FROM BELA.USUARIO');
 
-        return res.status(400).json({
+        return res.status(200).json({
             value: result,
             message: 'Codigo SQL ejecutado con exito',
             response: 1
